@@ -15,15 +15,6 @@ namespace BoardGame
 
         public GameObject SpaceGameObject;
 
-        void Awake()
-        {
-
-        }
-        void Update()
-        {
-
-        }
-
         public GameObject GetSpaceByIndex(int SpaceIndex)
         {
             return BoardSpaces.Where(x => x.GetComponent<BoardSpace>().Index == SpaceIndex).First();
@@ -36,6 +27,44 @@ namespace BoardGame
         {
             BoardSpaces = new List<GameObject>();
             DrawBoard();
+            InitSnakesAndLadders();
+        }
+
+        void InitSnakesAndLadders()
+        {
+            //TODO: Move these, possibly to a board generation screen
+            int MinSnakes = 3;
+            int MaxSnakes = 5;
+            int MinSnakeLength = 15;
+            int MaxSnakeLength = 20;
+
+            int MinLadders = 1;
+            int MaxLadders = 3;
+            int MinLadderLength = 15;
+            int MaxLadderLength = 20;
+            
+            InitSnakes(MinSnakes, MaxSnakes, MinSnakeLength, MaxSnakeLength);
+            InitLadders(MinLadders, MaxLadders, MinLadderLength, MaxLadderLength);
+        }
+
+        void InitSnakes(int Min, int Max, int MinLength, int MaxLength)
+        {
+            int CurrentSnakes = 0;
+            int SnakeCount = Random.Range(Min, Max);
+
+            while (CurrentSnakes < SnakeCount)
+            {
+                //choose spot at random on board, check if no property already exists, if not place a property
+                int Index = Random.Range(20, BoardSpaces.Count - 1);
+                print("placing snake at " + Index);
+
+                CurrentSnakes++;
+            }
+        }
+
+        void InitLadders(int Min, int Max, int MinLength, int MaxLength)
+        {
+            
         }
 
         /// <summary>
@@ -43,7 +72,7 @@ namespace BoardGame
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        void DrawSpace(int x, int y)
+        void CreateAndDrawSpace(int x, int y)
         {
             int SpaceIndex = GetSpaceIndex(x, y);
             GameObject Space = Instantiate(SpaceGameObject, transform);
@@ -67,9 +96,14 @@ namespace BoardGame
             {
                 for (int x = 0; x < BoardWidth; x++)
                 {
-                    DrawSpace(x, y);
+                    CreateAndDrawSpace(x, y);
                 }
             }
+        }
+
+        void DrawSnakesAndLadders()
+        {
+
         }
 
         /// <summary>
@@ -80,8 +114,6 @@ namespace BoardGame
         /// <returns></returns>
         int GetSpaceIndex(int x, int y)
         {
-            //return x + (y * BoardHeight) + 1;
-
             if (y % 2 == 0)
             {
                 return x + (y * BoardWidth) + 1;

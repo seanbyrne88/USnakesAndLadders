@@ -105,6 +105,7 @@ public class UIManager : MonoBehaviour {
 
     void AssignUIComponents()
     {
+        //Canvas Components (These are the main UI components that get enabled/disabled)
         StartScreen = transform.Find("StartScreen").gameObject;
         PlayerSelectScreen = transform.Find("PlayerSelectScreen").gameObject;
         BoardSetupScreen = transform.Find("BoardSetupScreen").gameObject;

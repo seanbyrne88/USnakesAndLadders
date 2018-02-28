@@ -42,7 +42,6 @@ public class GameManager : MonoBehaviour {
 
     private void InitPlayers(int NumberOfPlayers)
     {
-        print("Initializing Players");
         for(int i = 0; i < NumberOfPlayers; i++)
         {
             GameObject p = Instantiate(PlayerGameObject);
