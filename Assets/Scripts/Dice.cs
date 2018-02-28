@@ -4,19 +4,17 @@ using UnityEngine;
 
 namespace BoardGame
 {
-    public class Dice : MonoBehaviour
+    public static class Dice
     {
-
         // Use this for initialization
-        void Start()
+        public static int Roll()
         {
-
+            return Random.Range(1, 6);
         }
 
-        // Update is called once per frame
-        void Update()
+        public static int Roll(int NumberOfDice)
         {
-
+            return Random.Range(1, (6 * NumberOfDice));
         }
     }
 }

@@ -1,19 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using BoardGame;
 using UnityEngine;
 
 
 public class Player : MonoBehaviour {
 
     public string PlayerName;
-    public bool IsCurrentTurn;
+    //public bool IsCurrentTurn;
     public GameObject CurrentSpace;
+    public int CurrentSpaceIndex;
     public int Index;
     public PlayerSnapTo SnapTo;
     public float SnapToOffset = .1f;
 
-    public void InitPlayer(int PlayerIndex)
+    public void SetColorAndPosition(int PlayerIndex)
     {
         Index = PlayerIndex;
         GetComponent<SpriteRenderer>().color = GetColor();
@@ -22,7 +22,7 @@ public class Player : MonoBehaviour {
         SetPosition();
     }
 
-    private void SetPosition()
+    public void SetPosition()
     {
         Vector2 SpacePosition = CurrentSpace.transform.position;
         switch(SnapTo)

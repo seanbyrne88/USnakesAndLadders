@@ -1,21 +1,25 @@
-﻿using UnityEngine;
+﻿using BoardGame;
+
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    [HideInInspector]
+    //[HideInInspector]
     public GameManager Game;
 
     public UIState State;
 
+    public Sprite[] DiceSprites;
+
     //Start Screen
-    public GameObject StartScreen;
+    private GameObject StartScreen;
     private Button StartButton;
     private Button LoadButton;
     private Button QuitButton;
 
     //Player Setup
-    public GameObject PlayerSelectScreen;
+    private GameObject PlayerSelectScreen;
     private Dropdown PlayerSelectDropDown;
     private Button GoToBoardSetupButton;
     private int NumberOfPlayersSelected;
@@ -28,23 +32,35 @@ public class UIManager : MonoBehaviour {
     private Button GoToGameButton;
     private int BoardWidthSelected;
     private int BoardHeightSelected;
-    
-	
-	void Start () {
-        AssignUIComponents();
 
-        State = UIState.StartMenu;
-        UpdateUI();
+    //GameUI
+    private GameObject GameScreen;
+    private Text CurrentPlayerText;
+    private Button RollDiceButton;
+    private Image LastRollImage;
+
+    private void Awake()
+    {
+        AssignUIComponents();
+        UpdateUI(UIState.StartMenu);
+    }
+
+    void Start ()
+    {
+        Game = FindObjectOfType<GameManager>();
     }
 	
-	void UpdateUI()
+	private void UpdateUI(UIState State)
     {
+        this.State = State;
+
         switch (State)
         {
             case UIState.StartMenu:
                 {
                     PlayerSelectScreen.SetActive(false);
                     BoardSetupScreen.SetActive(false);
+                    GameScreen.SetActive(false);
                     StartScreen.SetActive(true);
                     break;
                 }
@@ -52,6 +68,7 @@ public class UIManager : MonoBehaviour {
                 {
                     StartScreen.SetActive(false);
                     BoardSetupScreen.SetActive(false);
+                    GameScreen.SetActive(false);
                     PlayerSelectScreen.SetActive(true);
                     break;
                 }
@@ -59,6 +76,7 @@ public class UIManager : MonoBehaviour {
                 {
                     StartScreen.SetActive(false);
                     PlayerSelectScreen.SetActive(false);
+                    GameScreen.SetActive(false);
                     BoardSetupScreen.SetActive(true);
                     break;
                 }
@@ -67,18 +85,30 @@ public class UIManager : MonoBehaviour {
                     StartScreen.SetActive(false);
                     PlayerSelectScreen.SetActive(false);
                     BoardSetupScreen.SetActive(false);
+                    GameScreen.SetActive(true);
                     break;
                 }
         }
     }
 
+    public void RefreshCurrentPlayerText()
+    {
+        CurrentPlayerText.text = string.Format("{0}'s Turn", Game.CurrentPlayer().PlayerName);
+        
+    }
+
+    public void RefreshDiceRollText(int DiceRoll)
+    {
+        print(DiceRoll);
+        LastRollImage.sprite = DiceSprites[DiceRoll - 1]; //-1 for 0 based arrays
+    }
+
     void AssignUIComponents()
     {
-        Game = FindObjectOfType<GameManager>();
-
         StartScreen = transform.Find("StartScreen").gameObject;
         PlayerSelectScreen = transform.Find("PlayerSelectScreen").gameObject;
         BoardSetupScreen = transform.Find("BoardSetupScreen").gameObject;
+        GameScreen = transform.Find("GameScreen").gameObject;
 
         //Start Screen UI Components
         StartButton = StartScreen.transform.Find("StartButton").GetComponent<Button>();
@@ -105,13 +135,20 @@ public class UIManager : MonoBehaviour {
 
         //Board Setup Screen Button Listeners
         GoToGameButton.onClick.AddListener(GoToGameButtonOnClick);
+
+        //Game Screen UI Components
+        CurrentPlayerText = GameScreen.GetComponentInChildren<Text>();
+        RollDiceButton = GameScreen.GetComponentInChildren<Button>();
+        LastRollImage = GameScreen.transform.Find("DiceRollImage").GetComponent<Image>();
+
+        //Game Screen Button Listeners
+        RollDiceButton.onClick.AddListener(RollDiceButtonOnClick);
     }
 
     #region Button Listeners
     void StartButtonOnClick()
     {
-        State = UIState.PlayerSetupMenu;
-        UpdateUI();
+        UpdateUI(UIState.PlayerSetupMenu);
     }
 
     void QuitButtonOnClick()
@@ -126,17 +163,23 @@ public class UIManager : MonoBehaviour {
     void GoToBoardSetupButtonOnClick()
     {
         NumberOfPlayersSelected = PlayerSelectDropDown.value+2; //+2 because 0 index is 2 players
-        State = UIState.BoardSetupMenu;
-        UpdateUI();
+        UpdateUI(UIState.BoardSetupMenu);
     }
 
     void GoToGameButtonOnClick()
     {
         BoardWidthSelected = int.Parse(BoardWidthInputField.text);
         BoardHeightSelected = int.Parse(BoardHeightInputField.text);
-        State = UIState.GameUI;
-        UpdateUI();
+
+        UpdateUI(UIState.GameUI);
+
         Game.StartGame(BoardWidthSelected, BoardHeightSelected, NumberOfPlayersSelected);
+        RefreshCurrentPlayerText(); //after game is initialized, set Game UI components based on game manager state
+    }
+
+    void RollDiceButtonOnClick()
+    {
+        Game.RollDiceAndMovePlayer();
     }
     #endregion
 }
