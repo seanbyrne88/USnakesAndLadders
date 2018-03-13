@@ -2078,8 +2078,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoardSpaces: []
-  SnakeSpaces: []
-  LadderSpaces: []
   SnakeMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   LadderMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   BoardHeight: 10

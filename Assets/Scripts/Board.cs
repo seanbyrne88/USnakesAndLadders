@@ -9,8 +9,6 @@ namespace BoardGame
 
         [HideInInspector]
         public List<GameObject> BoardSpaces;
-        public List<GameObject> SnakeSpaces;
-        public List<GameObject> LadderSpaces;
 
         public Material SnakeMaterial;
         public Material LadderMaterial;
@@ -60,13 +58,44 @@ namespace BoardGame
 
                 var Space = GetSpaceByIndex(Index).GetComponent<BoardSpace>();
                 var SpaceProp = Space.SpaceProperty;
+
+                if(SpaceProp.Type != BoardSpacePropertyType.None)
+                {
+                    continue; // skip iteration if space already has property
+                }
+
                 SpaceProp.Type = BoardSpacePropertyType.Snake;
                 SpaceProp.ConnectedIndex = Random.Range(0, Index - 10); //max is set to (Index - 10) so we go at least one row down on the board
 
                 DrawSnake(Space.gameObject);
-                SnakeSpaces.Add(Space.gameObject);
-
                 CurrentSnakes++;
+            }
+        }
+
+        void InitLadders(int Min, int Max, int MinLength, int MaxLength)
+        {
+            int CurrentLadders = 0;
+            int LadderCount = Random.Range(Min, Max);
+
+            while (CurrentLadders < LadderCount)
+            {
+                //choose spot at random on board, check if no property already exists, if not place a property
+                int Index = Random.Range(20, BoardSpaces.Count - 1); //start at 20 so nothing on first line
+                Debug.Log(string.Format("placing ladder at {0}", Index));
+
+                var Space = GetSpaceByIndex(Index).GetComponent<BoardSpace>();
+                var SpaceProp = Space.SpaceProperty;
+
+                if (SpaceProp.Type != BoardSpacePropertyType.None)
+                {
+                    continue; // skip iteration if space already has property
+                }
+
+                SpaceProp.Type = BoardSpacePropertyType.Ladder;
+                SpaceProp.ConnectedIndex = Random.Range(Index + 10, BoardHeight * BoardWidth); //mine is set to (Index + 10) so we go at least one row up on the board
+
+                DrawLadder(Space.gameObject);
+                CurrentLadders++;
             }
         }
 
@@ -110,12 +139,7 @@ namespace BoardGame
             lr.endColor = Color.green;
             lr.material = LadderMaterial;
         }
-
-        void InitLadders(int Min, int Max, int MinLength, int MaxLength)
-        {
-            
-        }
-
+        
         /// <summary>
         /// Draws Space on board object, sets Index based on x,y. Adds Space script, TextMesh for rendering position on screen
         /// </summary>
@@ -134,7 +158,6 @@ namespace BoardGame
             tm.color = (y + x) % 2 == 0 ? Color.white : Color.black;
             BoardSpaces.Add(Space);
         }
-
 
         /// <summary>
         /// Loops through width and height and draws spaces
