@@ -2078,6 +2078,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoardSpaces: []
+  SnakeSpaces: []
+  LadderSpaces: []
+  SnakeMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  LadderMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   BoardHeight: 10
   BoardWidth: 10
   SpaceGameObject: {fileID: 1677319666580120, guid: d0184b413877b8d43a253fa8fe7e852c,
